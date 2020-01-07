@@ -74,7 +74,7 @@ restartSingleService(){
                 2) createGlobalNetwork && $DCC_COMMAND up -d "${dockerResult}";;
                 3) $DCC_COMMAND stop "${dockerResult}";;
             esac
-        fi    
+        fi
     fi
 }
 
@@ -84,7 +84,7 @@ showLogs(){
         if [ -n "${dockerResult}" ]; then
             cd "${APP_PATH}"
             $DCC_COMMAND logs -f --tail 300 ${dockerResult}
-        fi    
+        fi
 }
 
 # 进入容器的shell
@@ -133,11 +133,11 @@ byebye(){
 #    choice=$(menuSelect 'one' 'two' 'three')
 selectWithDefault() {
 
-    local item i=0 numItems=$# 
+    local item i=0 numItems=$#
     declare -a indec
     indec=({a..z})
 
-    printf "\n%s\n" "=============================" >&2 
+    printf "\n%s\n" "=============================" >&2
     # Print numbered menu items, based on the arguments passed.
     for item in ${@:2}; do         # Short for: for item in "$@"; do
       printf '%s ) %s\n' "${indec[$((i++))]}" "$item"
@@ -183,28 +183,23 @@ select_docker(){
     echo $result
 }
 
-# Will wait for this interval, then run default action 
+# Will wait for this interval, then run default action
 # 参考：https://superuser.com/questions/161659/framework-for-interactive-shell-script-bash
 
 # 暂不使用
 createGlobalNetwork(){
     for nw in $GLOBAL_NETWORK; do
         if docker network inspect --format {{.Name}} $(docker network ls -q) | grep -qi $nw; then
-            echo "network $nw already existed since $(docker network inspect --format {{.Created}} $nw)" 
+            echo "network $nw already existed since $(docker network inspect --format {{.Created}} $nw)"
         else
             echo "newly created network $nw with following id:"
             docker network create $nw
         fi
-    done    
+    done
 }
 
 showAllContainerIP(){
-    local ip=""
-    for nw in $NETWORK_LIST; do
-        ip="${ip} {{.NetworkSettings.Networks.${nw}.IPAddress}}"
-    done
-    ip="{{.Name}} ${ip} {{.NetworkSettings.Ports}} {{.State.Status}}"
-    docker inspect --format "${ip}" $(docker ps -q) | grep "$CONTAINER_PREFIX"
+    docker inspect -f '{{.Name}}'='{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' $($DCC_COMMAND ps -q)
 }
 
 go(){
@@ -216,9 +211,9 @@ go(){
 
     while true; do
         result=$(selectByIndex "${ACTION_LIST_TEXT}")
-        fn_name="func${result}" 
+        fn_name="func${result}"
 
-        case "$result" in 
+        case "$result" in
             0 ) byebye;;
             * ) declare -pF | grep -q "$fn_name" && ${fn_name};;
         esac
