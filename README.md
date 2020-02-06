@@ -1,7 +1,7 @@
 # docker-launcher
 docker launcher kit, including launching scripts and project template.
   - launching scripts
-    1. Command-line console, 
+    1. Command-line console,
     1. basic docker management like start/stop containers or entering docker shell in a single CLI interface with build-in scripts
     1. customized management like backup/restore, showing container IP with your own scripts.
     1. You could manage single project or multiple projects all-in-one folder, or even multiple projects in multiple folders, at your own choice with help from project template.
