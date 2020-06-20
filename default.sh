@@ -6,7 +6,7 @@ DEFAULT_ACTION_LIST_TEXT="请选择要进行的操作，请输入小写英文字
 查看容器的日志
 进入容器的shell
 进入mysql的命令行
-查看整个服务的状态和启动时间
+服务的状态、启动时间、IP、端口、镜像名称
 "
 ALLOW_ROOT=false
 
@@ -49,9 +49,8 @@ restartWholeService(){
     关闭"
     actionResult=$(selectByIndex "$ACTIONS")
 
-    cd "${APP_PATH}"
     case $actionResult in
-        1) $DCC_COMMAND restart;;
+        1) $DCC_COMMAND down && $DCC_COMMAND up -d;;
         2) createGlobalNetwork && $DCC_COMMAND up -d;;
         3) $DCC_COMMAND down;;
     esac
@@ -68,9 +67,8 @@ restartSingleService(){
     if [ "${actionResult}" -ne 0 ]; then
         dockerResult=$(select_docker)
         if [ -n "${dockerResult}" ]; then
-            cd "${APP_PATH}"
             case $actionResult in
-                1) $DCC_COMMAND restart "${dockerResult}";;
+                1) $DCC_COMMAND stop "${dockerResult}" && $DCC_COMMAND up -d "${dockerResult}";;
                 2) createGlobalNetwork && $DCC_COMMAND up -d "${dockerResult}";;
                 3) $DCC_COMMAND stop "${dockerResult}";;
             esac
@@ -82,7 +80,6 @@ restartSingleService(){
 showLogs(){
         dockerResult=$(select_docker)
         if [ -n "${dockerResult}" ]; then
-            cd "${APP_PATH}"
             $DCC_COMMAND logs -f --tail 300 ${dockerResult}
         fi
 }
@@ -91,26 +88,21 @@ showLogs(){
 enterShell(){
         dockerResult=$(select_docker)
         if [ -n "${dockerResult}" ]; then
-            cd "${APP_PATH}"
             $DCC_COMMAND exec ${dockerResult} sh
         fi
 }
 
 # 进入mysql的命令行
 enterMySQLShell(){
-    cd "${APP_PATH}"
-    # TODO 这一段在服务器上面跑得不好
-    set -x
     $DCC_COMMAND exec ${MYSQL_CONTAINER} mysql -u${MYSQL_USER} -p"${MYSQL_PWD}"
-    # $DCC_COMMAND exec wss-mysql-new mysql –uroot –p'root#asp/$ALY'
-    set +x
 }
 
 # 查看整个服务的状态和启动时间
 showAllContainer(){
-    echo "正在列出所有容器"
-    cd "${APP_PATH}"
-    $DCC_COMMAND ps | grep "${CONTAINER_PREFIX}\|CREATED"
+    $DCC_COMMAND ps
+    echo "容器名称     IP    端口"
+    echo "--------------------------------------------------------------------------------"
+    docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $($DCC_COMMAND ps -aq)
 }
 
 nothing_pressed(){
@@ -199,7 +191,7 @@ createGlobalNetwork(){
 }
 
 showAllContainerIP(){
-    docker inspect -f '{{.Name}}'='{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' $($DCC_COMMAND ps -q)
+    echo "这个函数"
 }
 
 go(){
@@ -209,6 +201,7 @@ go(){
         exit
     fi
 
+    cd "${APP_PATH}"
     while true; do
         result=$(selectByIndex "${ACTION_LIST_TEXT}")
         fn_name="func${result}"

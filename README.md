@@ -1,2 +1,2 @@
 # Docker launcher script
-A launcher script to run docker-compose projects， please checkout the [docker\-compose\-template](https://github.com/philiphuang/docker-compose-template) how to use this script.
+A launcher script to run docker-compose projects， please checkout the [docker\-compose\-template](https://github.com/philiphuang/docker-compose-template) for how to use this script.
