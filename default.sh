@@ -102,7 +102,7 @@ showAllContainer(){
     $DCC_COMMAND ps
     echo "容器名称     IP    端口"
     echo "--------------------------------------------------------------------------------"
-    docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $($DCC_COMMAND ps -aq)
+    docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $($DCC_COMMAND ps -q)
 }
 
 nothing_pressed(){
