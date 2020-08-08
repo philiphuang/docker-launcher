@@ -100,9 +100,10 @@ enterMySQLShell(){
 # 查看整个服务的状态和启动时间
 showAllContainer(){
     $DCC_COMMAND ps
+    echo
     echo "容器名称     IP    端口"
-    echo "--------------------------------------------------------------------------------"
-    docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $($DCC_COMMAND ps -q)
+    echo "------------------------------------------------------------------------------------------"
+    docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}} {{end}}' $($DCC_COMMAND ps -q)
 }
 
 nothing_pressed(){
