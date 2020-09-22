@@ -1,12 +1,12 @@
 DEFAULT_CONTAINER_LIST_TEXT="请选择对那个应用进行操作，请输入数字："
 
 DEFAULT_ACTION_LIST_TEXT="请选择要进行的操作，请输入小写英文字母：
-全部服务的启动、关闭、重启
+全部容器的启动、关闭、重启
 单个容器的启动、关闭、重启
 查看容器的日志
 进入容器的shell
 进入mysql的命令行
-服务的状态、启动时间、IP、端口、镜像名称
+容器的状态、启动时间、IP、端口、镜像名称
 "
 ALLOW_ROOT=false
 
@@ -94,7 +94,7 @@ enterShell(){
 
 # 进入mysql的命令行
 enterMySQLShell(){
-    $DCC_COMMAND exec ${MYSQL_CONTAINER} mysql -u${MYSQL_USER} -p"${MYSQL_PWD}"
+    $DCC_COMMAND exec ${MYSQL_CONTAINER} mysql -u${MYSQL_USER} -p"${MYSQL_PASSWORD}"
 }
 
 # 查看整个服务的状态和启动时间
