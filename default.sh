@@ -114,7 +114,7 @@ nothing_pressed(){
 
 byebye(){
     echo "程序已退出。"
-    break;
+    exit;
 }
 
 # 参考：https://stackoverflow.com/questions/42789273/bash-choose-default-from-case-when-enter-is-pressed-in-a-select-prompt/42790075#42790075
@@ -152,6 +152,7 @@ selectWithDefault() {
     [[ -n $index ]] && echo "$index"
 }
 
+# 参数 ActionList：选择项，自动加上abc
 selectByIndex() {
     declare -a options
     options=($(awk '{print $1}' <<< "$1") "返回上级菜单或退出")
